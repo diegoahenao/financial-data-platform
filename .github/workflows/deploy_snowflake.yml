@@ -19,18 +19,18 @@ jobs:
 
       - name: Bootstrap Account Setup
         env:
-          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_ROLE: ${{ secrets.SNOWFLAKE_BOOTSTRAP_ROLE }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_BOOTSTRAP_ROLE }}
         run: snow sql -f config/account_setup.sql
 
       - name: Deploy DataOps Project
         env:
-          SNOWFLAKE_CONNECTIONS_DEV_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_CONNECTIONS_DEV_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_CONNECTIONS_DEV_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_CONNECTIONS_DEV_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_CONNECTIONS_DEV_WAREHOUSE: ${{ secrets.SNOWFLAKE_WH }}
-          SNOWFLAKE_CONNECTIONS_DEV_DATABASE: ${{ secrets.SNOWFLAKE_DB }}
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WH }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DB }}
         run: snow deploy --project config/ --env dev
