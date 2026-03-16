@@ -2,8 +2,8 @@
 USE ROLE SECURITYADMIN;
 
 -- Create functional roles
-CREATE ROLE IF NOT EXISTS ROLE_FIN_DATA_ENGINEER; -- Para crear/modificar pipelines
-CREATE ROLE IF NOT EXISTS ROLE_FIN_DATA_ANALYST;  -- Para leer la capa Gold/Silver
+CREATE ROLE IF NOT EXISTS ROLE_FIN_DATA_ENGINEER;
+CREATE ROLE IF NOT EXISTS ROLE_FIN_DATA_ANALYST;
 
 -- Hierarchy (Inheritance)
 GRANT ROLE ROLE_FIN_DATA_ANALYST TO ROLE ROLE_FIN_DATA_ENGINEER;
@@ -62,5 +62,3 @@ CREATE OR REPLACE TAG pii_data_tag;
 
 -- Assign the masking policy to the Tag directly
 ALTER TAG pii_data_tag SET MASKING POLICY mask_pii_email;
-
--- CREATE TABLE SILVER.NEW_TABLE ( email VARCHAR WITH TAG (pii_data_tag = 'email') );

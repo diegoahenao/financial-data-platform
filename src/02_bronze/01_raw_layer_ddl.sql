@@ -2,9 +2,7 @@ USE ROLE ROLE_FIN_DATA_ENGINEER;
 USE DATABASE FIN_DATA_DEV;
 CREATE SCHEMA IF NOT EXISTS RAW;
 
--- ==========================================
 -- 1. FILE FORMATS (Data Parsers)
--- ==========================================
 CREATE OR REPLACE FILE FORMAT ff_csv_header
   TYPE = CSV 
   SKIP_HEADER = 2
@@ -19,16 +17,12 @@ CREATE OR REPLACE FILE FORMAT ff_json
   TYPE = JSON 
   STRIP_OUTER_ARRAY = TRUE;
 
--- ==========================================
 -- 2. EXTERNAL STAGE (Pointer to Azure)
--- ==========================================
 CREATE OR REPLACE STAGE stg_finance_azure
   STORAGE_INTEGRATION = azure_finance_int
   URL = 'azure://stfinancedata2026.blob.core.windows.net/inbound-files/';
 
--- ==========================================
 -- 3. BRONZE TABLES (ELT Raw Storage & Lineage)
--- ==========================================
 CREATE OR REPLACE TABLE RAW.CLIENT_A (
     FILE_NAME STRING,
     RAW_CONTENT VARIANT,
