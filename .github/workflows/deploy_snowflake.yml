@@ -1,0 +1,42 @@
+name: Snowflake DataOps Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-database-objects:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Snowflake CLI
+        uses: snowflakedb/snowflake-cli-action@v2.0
+        with:
+          cli-version: "latest"
+
+      # PASO NUEVO: Ejecutar el Bootstrap (Huevo y Gallina)
+      - name: Bootstrap Account Setup
+        env:
+          # Para este paso, usamos SYSADMIN para que pueda crear la BD y los Roles
+          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_CONNECTIONS_BOOTSTRAP_ROLE: ${{ secrets.SNOWFLAKE_BOOTSTRAP_ROLE }}
+        run: snow sql -f config/account_setup.sql -c bootstrap
+
+      # PASO EXISTENTE: Despliegue del Proyecto con el Rol de Ingeniería
+      - name: Deploy DataOps Project
+        env:
+          # Aquí ya usamos nuestro rol de ingeniería y nuestra base de datos recién creada
+          SNOWFLAKE_CONNECTIONS_DEV_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_CONNECTIONS_DEV_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_CONNECTIONS_DEV_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_CONNECTIONS_DEV_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_CONNECTIONS_DEV_WAREHOUSE: ${{ secrets.SNOWFLAKE_WH }}
+          SNOWFLAKE_CONNECTIONS_DEV_DATABASE: ${{ secrets.SNOWFLAKE_DB }}
+        run: snow deploy --project config/ --env dev -c dev

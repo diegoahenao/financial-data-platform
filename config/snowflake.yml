@@ -1,6 +1,22 @@
 definition_version: '1.1'
 project_name: financial_ingestion
+
 environments:
   dev:
     database: FIN_DATA_DEV
     schema: RAW
+    role: ROLE_FIN_DATA_ENGINEER
+    warehouse: COMPUTE_WH
+
+entities:
+  setup_governance:
+    type: script
+    file: ../config/security_and_governance.sql
+  
+  bronze_ddl:
+    type: script
+    file: ../src/02_bronze/01_raw_layer_ddl.sql
+
+  bronze_orchestration:
+    type: script
+    file: ../src/02_bronze/02_orchestration_tasks.sql
