@@ -23,7 +23,7 @@ jobs:
           SNOWFLAKE_CONNECTIONS_BOOTSTRAP_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_CONNECTIONS_BOOTSTRAP_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
           SNOWFLAKE_CONNECTIONS_BOOTSTRAP_ROLE: ${{ secrets.SNOWFLAKE_BOOTSTRAP_ROLE }}
-        run: snow sql -f config/account_setup.sql -c bootstrap
+        run: snow sql -f config/account_setup.sql
 
       - name: Deploy DataOps Project
         env:
@@ -33,4 +33,4 @@ jobs:
           SNOWFLAKE_CONNECTIONS_DEV_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
           SNOWFLAKE_CONNECTIONS_DEV_WAREHOUSE: ${{ secrets.SNOWFLAKE_WH }}
           SNOWFLAKE_CONNECTIONS_DEV_DATABASE: ${{ secrets.SNOWFLAKE_DB }}
-        run: snow deploy --project config/ --env dev -c dev
+        run: snow deploy --project config/ --env dev
