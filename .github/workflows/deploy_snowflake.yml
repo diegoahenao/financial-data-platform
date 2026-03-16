@@ -16,8 +16,6 @@ jobs:
 
       - name: Setup Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v2.0
-        with:
-          cli-version: "latest"
 
       - name: Bootstrap Account Setup
         env:
