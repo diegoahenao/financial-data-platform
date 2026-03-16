@@ -36,6 +36,8 @@ jobs:
           database = "FIN_DATA_DEV"
           EOF
 
+          chmod 0600 ~/.snowflake/config.toml
+
       - name: Bootstrap Account Setup
         run: snow sql -f config/account_setup.sql -c bootstrap
 
