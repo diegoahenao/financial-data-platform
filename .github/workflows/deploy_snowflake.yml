@@ -17,20 +17,27 @@ jobs:
       - name: Setup Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v2.0
 
+      - name: Generate Snowflake Configuration File
+        run: |
+          mkdir -p ~/.snowflake
+          cat << EOF > ~/.snowflake/config.toml
+          [connections.bootstrap]
+          account = "${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          user = "${{ secrets.SNOWFLAKE_USER }}"
+          password = "${{ secrets.SNOWFLAKE_PASSWORD }}"
+          role = "ACCOUNTADMIN"
+
+          [connections.dev]
+          account = "${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          user = "${{ secrets.SNOWFLAKE_USER }}"
+          password = "${{ secrets.SNOWFLAKE_PASSWORD }}"
+          role = "ROLE_FIN_DATA_ENGINEER"
+          warehouse = "COMPUTE_WH"
+          database = "FIN_DATA_DEV"
+          EOF
+
       - name: Bootstrap Account Setup
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_BOOTSTRAP_ROLE }}
-        run: snow sql -f config/account_setup.sql
+        run: snow sql -f config/account_setup.sql -c bootstrap
 
       - name: Deploy DataOps Project
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WH }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DB }}
-        run: snow deploy --project config/ --env dev
+        run: snow deploy --project config/ --env dev -c dev
