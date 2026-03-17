@@ -16,7 +16,7 @@ BEGIN
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
             RAW_CONTENT:is_active::VARCHAR as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
-            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT,
+            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
         WHERE SOURCE_PATH LIKE '%client_a%'
         AND RAW_CONTENT:customer_id NOT LIKE '-----%'
@@ -33,7 +33,7 @@ BEGIN
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
             RAW_CONTENT:is_active::VARCHAR as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
-            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT,
+            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
         WHERE SOURCE_PATH LIKE '%client_c%'
         AND RAW_CONTENT:customer_id NOT LIKE '-----%'
@@ -49,7 +49,7 @@ BEGIN
             target.SIGNUP_SOURCE = source.SIGNUP_SOURCE,
             target.SEGMENT = source.SEGMENT,
             target.IS_ACTIVE = source.IS_ACTIVE,
-            target.INGESTED_AT = source.INGESTED_AT,
+            target.INGESTED_AT = source.INGESTED_AT
             
     WHEN NOT MATCHED THEN 
         INSERT (CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, LOYALTY_TIER, SIGNUP_SOURCE, SEGMENT, IS_ACTIVE, SOURCE_SYSTEM, INGESTED_AT)
