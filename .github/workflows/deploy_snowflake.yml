@@ -46,3 +46,13 @@ jobs:
 
       - name: Deploy Bronze Layer DDL
         run: snow sql -f src/bronze/ddl/raw_layer_ddl.sql -c dev
+
+      - name: Deploy ingestion stored procedures
+        run: |
+          for file in src/bronze/ingest/*.sql; do
+            echo "Executing $file..."
+            snow sql -f "$file" -c dev
+          done
+
+      - name: Deploy Orchestration Task
+        run: snow sql -f orchestration/ingestion_task.sql -c dev
