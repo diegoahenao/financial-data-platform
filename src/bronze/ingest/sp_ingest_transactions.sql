@@ -10,9 +10,16 @@ AS
 $$
 BEGIN
     -- Client A: XML
-    COPY INTO RAW.TRANSACTIONS_LANDING (SOURCE_PATH, RAW_CONTENT)
-    FROM (SELECT METADATA$FILENAME, $1 FROM @stg_finance_azure/client_a/)
-    FILE_FORMAT = (FORMAT_NAME = 'ff_xml') PATTERN = '.*\.xml';
+COPY INTO RAW.TRANSACTIONS_LANDING (SOURCE_PATH, RAW_CONTENT)
+    FROM (
+        SELECT 
+            METADATA$FILENAME,
+            PARSE_XML(REGEXP_REPLACE($1, '^[^<]*', '')) 
+        FROM @stg_finance_azure/client_a/
+        (FILE_FORMAT => 'RAW.FF_TEXT_RAW')
+    )
+    PATTERN = '.*\.xml'
+    ON_ERROR = 'CONTINUE';
 
     -- Client A: TXT
     COPY INTO RAW.TRANSACTIONS_LANDING (SOURCE_PATH, RAW_CONTENT)
