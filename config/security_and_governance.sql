@@ -21,11 +21,6 @@ CREATE OR REPLACE MASKING POLICY mask_pii_email AS (val STRING) RETURNS STRING -
     ELSE REGEXP_REPLACE(val, '(.).*(.@.*)', '\\1***\\2')
   END;
 
--- Apply the policy to the Canonical Model table (DIM_CUSTOMER)
-ALTER TABLE SILVER.DIM_CUSTOMER 
-  MODIFY COLUMN EMAIL SET MASKING POLICY mask_pii_email;
-
-
 ----- 3. Row Access Policies
 CREATE OR REPLACE TABLE SILVER.SECURITY_ENTITLEMENTS (
     USER_NAME VARCHAR,
