@@ -37,11 +37,6 @@ CREATE OR REPLACE ROW ACCESS POLICY row_policy_source_system AS (source_system V
       AND ALLOWED_SOURCE_SYSTEM = source_system
   );
 
--- Apply to Canonical tables
-ALTER TABLE SILVER.FACT_TRANSACTION 
-  ADD ROW ACCESS POLICY row_policy_source_system ON (SOURCE_SYSTEM);
-
-
 ----- 4. Object tagging
 CREATE OR REPLACE TAG pii_data_tag;
 
