@@ -9,16 +9,21 @@ BEGIN
     FROM (
         SELECT 
             METADATA$FILENAME, 
-            OBJECT_CONSTRUCT('line_data', TRIM($1), 'ingested_at', CURRENT_TIMESTAMP())
+            OBJECT_CONSTRUCT(
+                'sku', $1, 
+                'product_name', $2, 
+                'category', $3, 
+                'unit_price', $4,
+                'currency', $5,
+                'is_active' $6,
+                'ingested_at', CURRENT_TIMESTAMP()
+            )
         FROM @stg_finance_azure/
-        (FILE_FORMAT => 'RAW.FF_TEXT')
-        WHERE 
-            $1 NOT LIKE '----- %' 
-            AND $1 NOT LIKE 'product_id%'
-            AND TRIM($1) <> ''
     )
+    FILE_FORMAT = (FORMAT_NAME = 'RAW.FF_CSV_HEADER')
     PATTERN = '(?i).*products?.*\.csv'
-    ON_ERROR = 'CONTINUE';
+    ON_ERROR = 'ABORT_STATEMENT'
+    ;
 
     RETURN 'Success: data cleaned and ingested';
 END;
