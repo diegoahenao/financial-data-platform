@@ -38,7 +38,7 @@ CREATE ROW ACCESS POLICY IF NOT EXISTS row_policy_source_system AS (source_syste
   );
 
 ----- 4. Object tagging
-CREATE OR REPLACE TAG pii_data_tag;
+CREATE TAG IF NOT EXISTS pii_data_tag;
 
 -- Assign the masking policy to the Tag directly
-ALTER TAG pii_data_tag SET MASKING POLICY mask_pii_email;
+ALTER TAG pii_data_tag SET MASKING POLICY mask_pii_email FORCE;
