@@ -15,7 +15,7 @@ BEGIN
                 'category', $3, 
                 'unit_price', $4,
                 'currency', $5,
-                'is_active' $6,
+                'is_active', $6,
                 'ingested_at', CURRENT_TIMESTAMP()
             )
         FROM @stg_finance_azure/
