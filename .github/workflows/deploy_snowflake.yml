@@ -40,6 +40,9 @@ jobs:
 
       - name: Bootstrap Account Setup
         run: snow sql -f config/account_setup.sql -c bootstrap
+      
+      - name: Deploy Security and Governance
+        run: snow sql -f config/security_and_governance.sql -c bootstrap
 
-      - name: Deploy DataOps Project
-        run: snow deploy --project config/ --env dev -c dev
+      - name: Deploy Bronze Layer DDL
+        run: snow sql -f config/bronze_layer_ddl.sql -c dev
