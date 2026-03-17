@@ -1,3 +1,6 @@
+USE DATABASE FIN_DATA_DEV;
+USE SCHEMA RAW;
+
 -- Documented Master Task pointing to the Orchestrator SP
 CREATE OR REPLACE TASK TSK_BRONZE_MASTER
     WAREHOUSE = 'COMPUTE_WH'
