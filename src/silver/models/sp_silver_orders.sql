@@ -10,8 +10,8 @@ BEGIN
             RAW_CONTENT:order_id::VARCHAR as ORDER_ID,
             RAW_CONTENT:customer_id::VARCHAR as CUSTOMER_ID,
             RAW_CONTENT:order_date::VARCHAR as ORDER_DATE,
-            RAW_CONTENT:order_status::VARCHAR as ORDER_STATUS,
-            RAW_CONTENT:channel::VARCHAR as CHANNEL,
+            TRIM(SPLIT_PART(RAW_CONTENT:order_status, '<', 1))::VARCHAR as ORDER_STATUS,
+            TRIM(SPLIT_PART(RAW_CONTENT:channel, '<', 1))::VARCHAR as CHANNEL,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
             HASH(RAW_CONTENT:order_id, RAW_CONTENT:customer_id, RAW_CONTENT:order_date, RAW_CONTENT:order_status, RAW_CONTENT:channel) as TRACKINGHASH,
             RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
@@ -25,10 +25,11 @@ BEGIN
             RAW_CONTENT:order_id::VARCHAR as ORDER_ID,
             RAW_CONTENT:customer_id::VARCHAR as CUSTOMER_ID,
             RAW_CONTENT:order_date::VARCHAR as ORDER_DATE,
-            RAW_CONTENT:order_status::VARCHAR as ORDER_STATUS,
+            TRIM(SPLIT_PART(RAW_CONTENT:order_status, '<', 1))::VARCHAR as ORDER_STATUS,
+            NULL as CHANNEL,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
             HASH(RAW_CONTENT:order_id, RAW_CONTENT:customer_id, RAW_CONTENT:order_date, RAW_CONTENT:order_status) as TRACKINGHASH,
-            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT,
+            RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.ORDERS_LANDING 
         WHERE SOURCE_PATH LIKE '%client_c%'
         AND RAW_CONTENT:customer_id NOT LIKE '-----%'
