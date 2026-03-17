@@ -47,6 +47,9 @@ jobs:
       - name: Deploy Bronze Layer DDL
         run: snow sql -f src/bronze/ddl/raw_layer_ddl.sql -c dev
 
+      - name: Deploy Silver Layer DDL
+        run: snow sql -f src/silver/ddl/silver_layer_ddl.sql -c dev
+
       - name: Deploy ingestion stored procedures
         run: |
           for file in src/bronze/ingest/*.sql; do
@@ -54,8 +57,18 @@ jobs:
             snow sql -f "$file" -c dev
           done
 
-      - name: Deploy General Stored Procedures
+      - name: Deploy silver stored procedures
+        run: |
+          for file in src/silver/models/*.sql; do
+            echo "Executing $file..."
+            snow sql -f "$file" -c dev
+          done
+
+      - name: Deploy General Bronze Stored Procedures
         run: snow sql -f orchestration/sp_bronze_orchestration.sql -c dev
+
+      - name: Deploy General Silver Stored Procedures
+        run: snow sql -f orchestration/sp_silver_orchestration.sql -c dev
 
       - name: Deploy Orchestration Task
         run: snow sql -f orchestration/ingestion_task.sql -c dev
