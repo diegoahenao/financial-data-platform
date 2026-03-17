@@ -7,6 +7,7 @@ $$
 BEGIN
 
     CALL SILVER.SP_SILVER_CUSTOMERS();
+    CALL SILVER.SP_SILVER_ORDERS();
     
     RETURN 'Silver Layer Ingestion Completed Successfully';
 END;

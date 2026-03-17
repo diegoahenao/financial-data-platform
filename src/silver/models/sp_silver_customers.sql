@@ -16,6 +16,7 @@ BEGIN
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
             TRY_TO_BOOLEAN(TRIM(SPLIT_PART(RAW_CONTENT:is_active, '<', 1)))::BOOLEAN as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
+            HASH(RAW_CONTENT:customer_id, RAW_CONTENT:first_name, RAW_CONTENT:last_name, RAW_CONTENT:email, RAW_CONTENT:loyalty_tier, RAW_CONTENT:signup_source, RAW_CONTENT:segment, RAW_CONTENT:is_active) as TRACKINGHASH,
             RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
         WHERE SOURCE_PATH LIKE '%client_a%'
@@ -33,6 +34,7 @@ BEGIN
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
             TRY_TO_BOOLEAN(TRIM(SPLIT_PART(RAW_CONTENT:is_active, '<', 1)))::BOOLEAN as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
+            HASH(RAW_CONTENT:customer_id, RAW_CONTENT:customer_name, RAW_CONTENT:segment, RAW_CONTENT:is_active) as TRACKINGHASH,
             RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
         WHERE SOURCE_PATH LIKE '%client_c%'
@@ -40,6 +42,7 @@ BEGIN
     ) source
     ON target.CUSTOMER_ID = source.CUSTOMER_ID 
        AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
+       AND target.TRACKINGHASH <> source.TRACKINGHASH
     WHEN MATCHED THEN 
         UPDATE SET 
             target.FIRST_NAME = source.FIRST_NAME,
@@ -49,11 +52,12 @@ BEGIN
             target.SIGNUP_SOURCE = source.SIGNUP_SOURCE,
             target.SEGMENT = source.SEGMENT,
             target.IS_ACTIVE = source.IS_ACTIVE,
+            target.TRACKINGHASH = source.TRACKINGHASH,
             target.INGESTED_AT = source.INGESTED_AT
             
     WHEN NOT MATCHED THEN 
-        INSERT (CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, LOYALTY_TIER, SIGNUP_SOURCE, SEGMENT, IS_ACTIVE, SOURCE_SYSTEM, INGESTED_AT)
-        VALUES (source.CUSTOMER_ID, source.FIRST_NAME, source.LAST_NAME, source.EMAIL, source.LOYALTY_TIER, source.SIGNUP_SOURCE, source.SEGMENT, source.IS_ACTIVE, source.SOURCE_SYSTEM, source.INGESTED_AT);
+        INSERT (CUSTOMER_ID, FIRST_NAME, LAST_NAME, EMAIL, LOYALTY_TIER, SIGNUP_SOURCE, SEGMENT, IS_ACTIVE, SOURCE_SYSTEM, TRACKINGHASH, INGESTED_AT)
+        VALUES (source.CUSTOMER_ID, source.FIRST_NAME, source.LAST_NAME, source.EMAIL, source.LOYALTY_TIER, source.SIGNUP_SOURCE, source.SEGMENT, source.IS_ACTIVE, source.SOURCE_SYSTEM, source.TRACKINGHASH, source.INGESTED_AT);
 
     RETURN 'Success: Customers Silver Idempotent Update';
 END;
