@@ -12,7 +12,7 @@ BEGIN
             RAW_CONTENT:last_name::VARCHAR as LAST_NAME,
             RAW_CONTENT:email::VARCHAR as EMAIL,
             RAW_CONTENT:loyalty_tier::VARCHAR as LOYALTY_TIER,
-            RAW_CONTENT:signup_source::VARCHAR as SIGNUP_SOURCE,
+            TRIM(SPLIT_PART(RAW_CONTENT:signup_source, '<', 1))::VARCHAR as SIGNUP_SOURCE,
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
             TRY_TO_BOOLEAN(TRIM(SPLIT_PART(RAW_CONTENT:is_active, '<', 1)))::BOOLEAN as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
