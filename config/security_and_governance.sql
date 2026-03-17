@@ -10,8 +10,9 @@ GRANT OWNERSHIP ON SCHEMA FIN_DATA_DEV.SILVER TO ROLE ROLE_FIN_DATA_ENGINEER REV
 GRANT USAGE ON INTEGRATION azure_finance_int TO ROLE ROLE_FIN_DATA_ENGINEER;
 GRANT ROLE ROLE_FIN_DATA_ENGINEER TO ROLE SYSADMIN;
 
------ 2. Data Masking Policy para PII (Emails) - Column level
-USE ROLE SYSADMIN;
+----- 2. Data Masking Policy (PII Emails)
+-- CAMBIO: Usamos el rol de ingeniería para crear objetos en sus esquemas
+USE ROLE ROLE_FIN_DATA_ENGINEER; 
 USE DATABASE FIN_DATA_DEV;
 USE SCHEMA SILVER;
 
@@ -22,12 +23,11 @@ CREATE MASKING POLICY IF NOT EXISTS mask_pii_email AS (val STRING) RETURNS STRIN
   END;
 
 ----- 3. Row Access Policies
-CREATE OR REPLACE TABLE SILVER.SECURITY_ENTITLEMENTS (
+CREATE TABLE IF NOT EXISTS SILVER.SECURITY_ENTITLEMENTS (
     USER_NAME VARCHAR,
     ALLOWED_SOURCE_SYSTEM VARCHAR
 );
 
--- Create the Row Access Policy
 CREATE ROW ACCESS POLICY IF NOT EXISTS row_policy_source_system AS (source_system VARCHAR) RETURNS BOOLEAN ->
   CURRENT_ROLE() IN ('ROLE_FIN_DATA_ENGINEER', 'SYSADMIN')
   OR
@@ -40,5 +40,5 @@ CREATE ROW ACCESS POLICY IF NOT EXISTS row_policy_source_system AS (source_syste
 ----- 4. Object tagging
 CREATE TAG IF NOT EXISTS pii_data_tag;
 
--- Assign the masking policy to the Tag directly
+-- Usamos FORCE para asegurar que se aplique en cada ejecución del pipeline
 ALTER TAG pii_data_tag SET MASKING POLICY mask_pii_email FORCE;
