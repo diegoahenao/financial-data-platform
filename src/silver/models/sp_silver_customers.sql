@@ -14,7 +14,7 @@ BEGIN
             RAW_CONTENT:loyalty_tier::VARCHAR as LOYALTY_TIER,
             RAW_CONTENT:signup_source::VARCHAR as SIGNUP_SOURCE,
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
-            TRY_TO_BOOLEAN(REGEXP_SUBSTR(RAW_CONTENT:is_active, '(?i)true|false'))::BOOLEAN as IS_ACTIVE,
+            TRY_TO_BOOLEAN(TRIM(SPLIT_PART(RAW_CONTENT:is_active, '<', 1)))::BOOLEAN as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
             RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
@@ -31,7 +31,7 @@ BEGIN
             NULL as LOYALTY_TIER,
             NULL as SIGNUP_SOURCE,
             RAW_CONTENT:segment::VARCHAR as SEGMENT,
-            TRY_TO_BOOLEAN(REGEXP_SUBSTR(RAW_CONTENT:is_active, '(?i)true|false'))::BOOLEAN as IS_ACTIVE,
+            TRY_TO_BOOLEAN(TRIM(SPLIT_PART(RAW_CONTENT:is_active, '<', 1)))::BOOLEAN as IS_ACTIVE,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
             RAW_CONTENT:ingested_at::VARCHAR as INGESTED_AT
         FROM RAW.CUSTOMERS_LANDING 
