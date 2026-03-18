@@ -63,9 +63,8 @@ BEGIN
     ON target.TXN_ID = source.TXN_ID 
        AND target.PRODUCT_ID = source.PRODUCT_ID
        AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
-       AND target.TRACKINGHASH <> source.TRACKINGHASH
 
-    WHEN MATCHED THEN
+    WHEN MATCHED AND target.TRACKINGHASH <> source.TRACKINGHASH THEN 
         UPDATE SET 
             target.ORDER_ID = source.ORDER_ID,
             target.ORDER_DATE = source.ORDER_DATE,

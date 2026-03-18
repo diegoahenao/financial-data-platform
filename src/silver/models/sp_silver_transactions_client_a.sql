@@ -18,7 +18,7 @@ BEGIN
         xml_table AS (SELECT 
             XMLGET(t.value, 'TransactionID'):"$" ::VARCHAR as TXN_ID,
             XMLGET(XMLGET(t.value, 'Order'), 'OrderID'):"$" ::VARCHAR as ORDER_ID,
-            XMLGET(XMLGET(t.value, 'Order'), 'OrderDate'):"$" ::VARCHAR as ORDER_DATE,
+            NULLIF(XMLGET(XMLGET(t.value, 'Order'), 'OrderDate'):"$" ::VARCHAR,'')::DATE as ORDER_DATE,
             XMLGET(XMLGET(XMLGET(t.value, 'Order'), 'Customer'), 'CustomerID'):"$" ::VARCHAR as CUSTOMER_ID,
             XMLGET(XMLGET(XMLGET(XMLGET(t.value, 'Order'), 'Customer'), 'Name'), 'FirstName'):"$" ::VARCHAR as FIRST_NAME,
             XMLGET(XMLGET(XMLGET(XMLGET(t.value, 'Order'), 'Customer'), 'Name'), 'LastName'):"$" ::VARCHAR as LAST_NAME,
@@ -26,11 +26,11 @@ BEGIN
             XMLGET(XMLGET(XMLGET(XMLGET(t.value, 'Order'), 'Customer'), 'Notes'), 'Note'):"$" ::VARCHAR as NOTE,
             XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'SKU'):"$" ::VARCHAR as PRODUCT_ID,
             XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'Description'):"$" ::VARCHAR as PRODUCT_DESCRIPTION,
-            XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'Quantity'):"$" ::VARCHAR as QUANTITY,
-            XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'UnitPrice'):"$" ::VARCHAR as UNIT_PRICE,
+            NVL(TRY_TO_NUMBER(NULLIF(XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'Quantity'):"$" ::VARCHAR,'')), 0) as QUANTITY,
+            NVL(TRY_TO_NUMBER(NULLIF(XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'UnitPrice'):"$" ::VARCHAR,'')), 0) as UNIT_PRICE,
             XMLGET(XMLGET(XMLGET(t.value, 'Items'), 'Item'), 'UnitPrice'):"@currency" ::VARCHAR as UNIT_PRICE_CURRENCY,
             XMLGET(XMLGET(t.value, 'Payment'), 'Method'):"$" ::VARCHAR as PAYMENT_METHOD,
-            XMLGET(XMLGET(t.value, 'Payment'), 'Amount'):"$" ::VARCHAR as AMOUNT,
+            NVL(TRY_TO_NUMBER(NULLIF(XMLGET(XMLGET(t.value, 'Payment'), 'Amount'):"$" ::VARCHAR,'')), 0) as AMOUNT,
             XMLGET(XMLGET(t.value, 'Payment'), 'Amount'):"@currency" ::VARCHAR as AMOUNT_CURRENCY,
             UPPER(SPLIT_PART(SOURCE_PATH, '/', 1)) as SOURCE_SYSTEM,
             LOAD_TIMESTAMP
@@ -61,8 +61,7 @@ BEGIN
     ) source
     ON target.TXN_ID = source.TXN_ID
         AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
-        AND target.TRACKINGHASH <> source.TRACKINGHASH
-    WHEN MATCHED THEN 
+    WHEN MATCHED AND target.TRACKINGHASH <> source.TRACKINGHASH THEN 
         UPDATE SET
             target.ORDER_ID = source.ORDER_ID,
             target.ORDER_DATE = source.ORDER_DATE,

@@ -38,8 +38,8 @@ BEGIN
     ) source
     ON target.PRODUCT_ID = source.PRODUCT_ID 
        AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
-       AND target.TRACKINGHASH <> source.TRACKINGHASH
-    WHEN MATCHED THEN 
+       
+    WHEN MATCHED AND target.TRACKINGHASH <> source.TRACKINGHASH THEN 
         UPDATE SET 
             target.PRODUCT_ID = source.PRODUCT_ID,
             target.PRODUCT_NAME = source.PRODUCT_NAME,
