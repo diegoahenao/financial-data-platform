@@ -19,7 +19,7 @@ BEGIN
             SELECT
                 txn_json:id::VARCHAR as TXN_ID,
                 txn_json:order.id::VARCHAR as ORDER_ID,
-                txn_json:order.date::DATE as ORDER_DATE,
+                NULLIF(txn_json:order.date::VARCHAR,'')::DATE as ORDER_DATE,
                 txn_json:order.customer.id::VARCHAR as CUSTOMER_ID,
                 SPLIT_PART(txn_json:order.customer.name::VARCHAR, ' ', 1) as FIRST_NAME,
                 REPLACE(txn_json:order.customer.name::VARCHAR, SPLIT_PART(txn_json:order.customer.name::VARCHAR, ' ', 1) || ' ', '') as LAST_NAME,
