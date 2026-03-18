@@ -16,5 +16,5 @@ CREATE STORAGE INTEGRATION IF NOT EXISTS azure_finance_int
   TYPE = EXTERNAL_STAGE
   STORAGE_PROVIDER = 'AZURE'
   ENABLED = TRUE
-  AZURE_TENANT_ID = '<tu_azure_tenant_id>'
+  AZURE_TENANT_ID = '20452560-2ab8-4a92-aaad-4a1653c4dfa0'
   STORAGE_ALLOWED_LOCATIONS = ('azure://stfinancedata2026.blob.core.windows.net/inbound-files/');
