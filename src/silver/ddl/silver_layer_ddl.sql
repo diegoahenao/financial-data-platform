@@ -53,7 +53,6 @@ CREATE TABLE IF NOT EXISTS SILVER.TRANSACTIONS (
     TXN_KEY            NUMBER IDENTITY(1,1),
     TXN_ID             VARCHAR(50),
     ORDER_KEY          VARCHAR(50),
-    TXN_ID             VARCHAR(50),
     ORDER_ID           VARCHAR(50),
     ORDER_DATE         DATE,
     CUSTOMER_ID        VARCHAR(50),
