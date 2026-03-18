@@ -11,7 +11,6 @@ GRANT USAGE ON INTEGRATION azure_finance_int TO ROLE ROLE_FIN_DATA_ENGINEER;
 GRANT ROLE ROLE_FIN_DATA_ENGINEER TO ROLE SYSADMIN;
 
 ----- 2. Data Masking Policy (PII Emails)
--- CAMBIO: Usamos el rol de ingeniería para crear objetos en sus esquemas
 USE ROLE ROLE_FIN_DATA_ENGINEER; 
 USE DATABASE FIN_DATA_DEV;
 USE SCHEMA SILVER;
@@ -40,5 +39,4 @@ CREATE ROW ACCESS POLICY IF NOT EXISTS row_policy_source_system AS (source_syste
 ----- 4. Object tagging
 CREATE TAG IF NOT EXISTS pii_data_tag;
 
--- Usamos FORCE para asegurar que se aplique en cada ejecución del pipeline
 ALTER TAG pii_data_tag SET MASKING POLICY mask_pii_email FORCE;
