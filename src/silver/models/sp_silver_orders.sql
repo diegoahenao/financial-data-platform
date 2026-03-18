@@ -36,8 +36,8 @@ BEGIN
     ) source
     ON target.ORDER_ID = source.ORDER_ID 
        AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
-       AND target.TRACKINGHASH <> source.TRACKINGHASH
-    WHEN MATCHED THEN 
+
+    WHEN MATCHED AND target.TRACKINGHASH <> source.TRACKINGHASH THEN 
         UPDATE SET 
             target.CUSTOMER_ID = source.CUSTOMER_ID,
             target.ORDER_DATE = source.ORDER_DATE,

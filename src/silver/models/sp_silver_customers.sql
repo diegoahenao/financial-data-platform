@@ -42,8 +42,8 @@ BEGIN
     ) source
     ON target.CUSTOMER_ID = source.CUSTOMER_ID 
        AND target.SOURCE_SYSTEM = source.SOURCE_SYSTEM
-       AND target.TRACKINGHASH <> source.TRACKINGHASH
-    WHEN MATCHED THEN 
+
+    WHEN MATCHED AND target.TRACKINGHASH <> source.TRACKINGHASH THEN 
         UPDATE SET 
             target.FIRST_NAME = source.FIRST_NAME,
             target.LAST_NAME = source.LAST_NAME,
